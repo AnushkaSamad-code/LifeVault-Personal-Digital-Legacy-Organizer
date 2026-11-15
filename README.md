@@ -25,9 +25,10 @@ Built with **CustomTkinter** and **SQLite**, LifeVault demonstrates the practica
 ### 1. Prerequisites
 - Python 3.10+ (Python 3.13 supported)
 
-### 2. Create and Activate Virtual Environment
+### 2. Create and Activate Virtual Environment ( Updating PowerShell Security Policy )
 ```bash
-# Windows (PowerShell)
+# Windows (PowerShell) + ( Policy Update)
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 
