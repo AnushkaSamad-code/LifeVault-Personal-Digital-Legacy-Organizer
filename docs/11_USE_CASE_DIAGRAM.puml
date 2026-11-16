@@ -1,0 +1,256 @@
+@startuml
+' ==============================================================================
+' LifeVault – Personal Digital Legacy Organizer
+' UML Use Case Diagram (BSCS Data Structures & Software Engineering)
+' Baseline: docs/10_SOFTWARE_REQUIREMENTS_SPECIFICATION.md (FR-001 to FR-062)
+' ==============================================================================
+
+skinparam packageStyle rectangle
+skinparam roundCorner 8
+skinparam shadowing false
+skinparam defaultFontName "Segoe UI", Arial, sans-serif
+skinparam defaultFontSize 11
+skinparam defaultFontColor #172B4D
+
+skinparam actor {
+    BackgroundColor #FFFFFF
+    BorderColor #172B4D
+    FontColor #172B4D
+    FontSize 13
+    FontStyle bold
+}
+
+skinparam rectangle {
+    BorderColor #172B4D
+    BorderThickness 1.5
+    BackgroundColor #FAFBFC
+    FontColor #172B4D
+    FontSize 14
+    FontStyle bold
+}
+
+skinparam package {
+    BorderColor #243B63
+    BorderThickness 1
+    BackgroundColor #F4F5FA
+    FontColor #172B4D
+    FontSize 11
+    FontStyle bold
+}
+
+skinparam usecase {
+    BackgroundColor #FFFFFF
+    BorderColor #243B63
+    BorderThickness 1.2
+    FontColor #172B4D
+    FontSize 11
+    ArrowColor #243B63
+    ArrowFontColor #4A5568
+    ArrowFontSize 10
+}
+
+left to right direction
+
+' ==============================================================================
+' Primary Actor – single-user offline desktop application (SRS §2.3, §8)
+' ==============================================================================
+actor "User\n(Primary Actor)" as User
+
+' ==============================================================================
+' System Boundary
+' ==============================================================================
+rectangle "LifeVault – Personal Digital Legacy Organizer" {
+
+    ' --------------------------------------------------------------------------
+    ' Module 1: Dashboard (Owner: Anushka Samad | Dynamic Array)
+    ' FR-001 to FR-005
+    ' --------------------------------------------------------------------------
+    package "1. Dashboard" {
+        usecase "View Dashboard Metrics" as UC_DashMetrics
+        usecase "View Recent Activity" as UC_DashRecent
+        usecase "Quick-Create Record" as UC_DashShortcuts
+    }
+
+    ' --------------------------------------------------------------------------
+    ' Module 2: Memory Vault (Owner: Anushka Samad | Circular Linked List)
+    ' FR-006 to FR-012
+    ' --------------------------------------------------------------------------
+    package "2. Memory Vault" {
+        usecase "Create Memory" as UC_MemCreate
+        usecase "Browse Memories Cyclically" as UC_MemCarousel
+        usecase "Edit Memory" as UC_MemEdit
+        usecase "Archive Memory" as UC_MemArchive
+        usecase "Delete Memory Permanently" as UC_MemDelete
+    }
+
+    ' --------------------------------------------------------------------------
+    ' Module 3: Life Timeline (Owner: Anushka Samad | Singly Linked List)
+    ' FR-013 to FR-017
+    ' --------------------------------------------------------------------------
+    package "3. Life Timeline" {
+        usecase "View Chronological Timeline" as UC_TimeView
+        usecase "Filter by Type & Date Range" as UC_TimeFilter
+        UC_TimeFilter .> UC_TimeView : <<extend>>
+    }
+
+    ' --------------------------------------------------------------------------
+    ' Module 4: Memory Connections (Owner: Anushka Samad | Graph)
+    ' FR-018 to FR-024
+    ' --------------------------------------------------------------------------
+    package "4. Memory Connections" {
+        usecase "Connect Related Records" as UC_ConnCreate
+        usecase "View Record Neighbors" as UC_ConnNeighbors
+        usecase "Traverse via BFS / DFS" as UC_ConnTraverse
+        usecase "Remove Connection" as UC_ConnRemove
+        UC_ConnTraverse .> UC_ConnNeighbors : <<extend>>
+    }
+
+    ' --------------------------------------------------------------------------
+    ' Module 5: Category Manager (Owner: Anushka Samad | General Tree)
+    ' FR-025 to FR-030
+    ' --------------------------------------------------------------------------
+    package "5. Category Manager" {
+        usecase "Browse Category Hierarchy" as UC_CatBrowse
+        usecase "Add Category Path" as UC_CatAdd
+        usecase "View Records by Category" as UC_CatRecords
+        usecase "Delete Category Node" as UC_CatDelete
+    }
+
+    ' --------------------------------------------------------------------------
+    ' Module 6: Document Vault (Owner: Ubaid Raza | Filesystem / Repository)
+    ' FR-031 to FR-036
+    ' --------------------------------------------------------------------------
+    package "6. Document Vault" {
+        usecase "Create Document" as UC_DocCreate
+        usecase "Attach Local File" as UC_DocAttach
+        usecase "Open Attached File" as UC_DocOpen
+        usecase "Edit Document" as UC_DocEdit
+        usecase "Archive Document" as UC_DocArchive
+        usecase "Delete Document Permanently" as UC_DocDelete
+        UC_DocAttach .> UC_DocCreate : <<extend>>
+        UC_DocAttach .> UC_DocEdit : <<extend>>
+    }
+
+    ' --------------------------------------------------------------------------
+    ' Module 7: Achievement Vault (Owner: Ubaid Raza | Repository)
+    ' FR-037 to FR-042
+    ' --------------------------------------------------------------------------
+    package "7. Achievement Vault" {
+        usecase "Create Achievement" as UC_AchCreate
+        usecase "View Achievement Details" as UC_AchView
+        usecase "Filter Achievements" as UC_AchFilter
+        usecase "Edit Achievement" as UC_AchEdit
+        usecase "Archive Achievement" as UC_AchArchive
+        usecase "Delete Achievement Permanently" as UC_AchDelete
+        UC_AchFilter .> UC_AchView : <<extend>>
+    }
+
+    ' --------------------------------------------------------------------------
+    ' Module 8: Smart Search (Owner: Ubaid Raza | BST & Hash Table)
+    ' FR-043 to FR-047
+    ' --------------------------------------------------------------------------
+    package "8. Smart Search" {
+        usecase "Search by Exact ID" as UC_SearchExact
+        usecase "Search by Keyword" as UC_SearchKeyword
+        usecase "Filter by Record Type" as UC_SearchFilter
+        UC_SearchFilter .> UC_SearchKeyword : <<extend>>
+    }
+
+    ' --------------------------------------------------------------------------
+    ' Module 9: Priority Vault (Owner: Ubaid Raza | Max-Heap)
+    ' FR-048 to FR-051
+    ' --------------------------------------------------------------------------
+    package "9. Priority Vault" {
+        usecase "View Priority Triage List" as UC_PrioView
+        usecase "Modify Record Priority" as UC_PrioModify
+    }
+
+    ' --------------------------------------------------------------------------
+    ' Module 10: Archive & Undo (Owner: Ubaid Raza | Stack)
+    ' FR-052 to FR-058
+    ' --------------------------------------------------------------------------
+    package "10. Archive & Undo" {
+        usecase "View Archived Records" as UC_ArcView
+        usecase "Restore Archived Record" as UC_ArcRestore
+        usecase "Permanently Delete\nArchived Record" as UC_ArcDelete
+        usecase "Undo Supported Action" as UC_UndoAction
+    }
+
+    ' --------------------------------------------------------------------------
+    ' Shared Safeguards – only SRS-mandated modal / verification sub-functions
+    ' --------------------------------------------------------------------------
+    package "Shared Safeguards" {
+        usecase "Confirm Permanent\nDeletion" as UC_ConfirmDelete
+        usecase "Verify File Existence" as UC_VerifyFile
+    }
+}
+
+' ==============================================================================
+' Actor → Use Case Associations (grouped by module)
+' ==============================================================================
+
+' Dashboard
+User --> UC_DashMetrics
+User --> UC_DashRecent
+User --> UC_DashShortcuts
+
+' Memory Vault
+User --> UC_MemCreate
+User --> UC_MemCarousel
+User --> UC_MemEdit
+User --> UC_MemArchive
+User --> UC_MemDelete
+
+' Life Timeline
+User --> UC_TimeView
+
+' Memory Connections
+User --> UC_ConnCreate
+User --> UC_ConnNeighbors
+User --> UC_ConnRemove
+
+' Category Manager
+User --> UC_CatBrowse
+User --> UC_CatAdd
+User --> UC_CatRecords
+User --> UC_CatDelete
+
+' Document Vault
+User --> UC_DocCreate
+User --> UC_DocOpen
+User --> UC_DocEdit
+User --> UC_DocArchive
+User --> UC_DocDelete
+
+' Achievement Vault
+User --> UC_AchCreate
+User --> UC_AchView
+User --> UC_AchEdit
+User --> UC_AchArchive
+User --> UC_AchDelete
+
+' Smart Search
+User --> UC_SearchExact
+User --> UC_SearchKeyword
+
+' Priority Vault
+User --> UC_PrioView
+User --> UC_PrioModify
+
+' Archive & Undo
+User --> UC_ArcView
+User --> UC_ArcRestore
+User --> UC_ArcDelete
+User --> UC_UndoAction
+
+' ==============================================================================
+' <<include>> – SRS-mandated modal confirmation and file verification
+' ==============================================================================
+UC_MemDelete ..> UC_ConfirmDelete : <<include>>
+UC_DocDelete ..> UC_ConfirmDelete : <<include>>
+UC_AchDelete ..> UC_ConfirmDelete : <<include>>
+UC_ArcDelete ..> UC_ConfirmDelete : <<include>>
+
+UC_DocOpen ..> UC_VerifyFile : <<include>>
+
+@enduml

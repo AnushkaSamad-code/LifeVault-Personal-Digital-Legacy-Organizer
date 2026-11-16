@@ -1,0 +1,48 @@
+﻿@startuml
+'LifeVault - Personal Digital Legacy Organizer
+hide methods
+hide stereotypes
+skinparam linetype ortho
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam entity {
+  BackgroundColor #F4F5FA
+  BorderColor #172B4D
+  FontColor #172B4D
+  HeaderBackgroundColor #172B4D
+  HeaderFontColor #FFFFFF
+}
+left to right direction
+entity "records" as records {
+  * id : INTEGER <<PK, AUTOINCREMENT>>
+  --
+  * record_type : TEXT <<NOT NULL, CHECK>>
+  * title : TEXT <<NOT NULL>>
+  * category : TEXT <<NOT NULL>>
+  * record_date : TEXT <<NOT NULL, ISO YYYY-MM-DD>>
+  description : TEXT <<DEFAULT ''>>
+  file_path : TEXT <<DEFAULT ''>>
+  * priority : INTEGER <<NOT NULL, DEFAULT 3, CHECK 1..5>>
+  * archived : INTEGER <<NOT NULL, DEFAULT 0, CHECK 0/1>>
+  * created_at : TEXT <<NOT NULL>>
+}
+entity "record_connections" as connections {
+  * id : INTEGER <<PK, AUTOINCREMENT>>
+  --
+  * source_id : INTEGER <<FK, NOT NULL>>
+  * target_id : INTEGER <<FK, NOT NULL>>
+  relation_label : TEXT <<DEFAULT ''>>
+  --
+  UNIQUE (source_id, target_id)
+  CHECK (source_id < target_id)
+}
+records ||--o{ connections : "source_id references id"
+records ||--o{ connections : "target_id references id"
+note right of connections
+  Each row stores one undirected edge.
+  The normalized pair source_id < target_id
+  and UNIQUE(source_id, target_id) prevent
+  reversed or duplicate representations.
+  ON DELETE CASCADE for both foreign keys.
+end note
+@enduml
